@@ -82,12 +82,12 @@ $EndComp
 $Comp
 L power:+6V #PWR?
 U 1 1 60425D0B
-P 2650 800
-F 0 "#PWR?" H 2650 650 50  0001 C CNN
-F 1 "+6V" H 2665 973 50  0000 C CNN
-F 2 "" H 2650 800 50  0001 C CNN
-F 3 "" H 2650 800 50  0001 C CNN
-	1    2650 800 
+P 2650 750
+F 0 "#PWR?" H 2650 600 50  0001 C CNN
+F 1 "+6V" H 2665 923 50  0000 C CNN
+F 2 "" H 2650 750 50  0001 C CNN
+F 3 "" H 2650 750 50  0001 C CNN
+	1    2650 750 
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -253,4 +253,9 @@ Wire Wire Line
 Wire Wire Line
 	5000 1400 4500 1400
 Connection ~ 5000 1350
+Wire Wire Line
+	2650 750  2350 750 
+Connection ~ 2350 750 
+Wire Wire Line
+	2350 750  2150 750 
 $EndSCHEMATC
