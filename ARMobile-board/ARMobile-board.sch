@@ -190,6 +190,11 @@ Wire Wire Line
 	3000 4250 3000 4100
 Wire Wire Line
 	3000 4100 2750 4100
+Wire Wire Line
+	2650 750  2350 750 
+Connection ~ 2350 750 
+Wire Wire Line
+	2350 750  2150 750 
 $Comp
 L Device:Battery BT?
 U 1 1 60456B75
@@ -204,58 +209,68 @@ $EndComp
 $Comp
 L Device:C C?
 U 1 1 60457EAB
-P 5000 1200
-F 0 "C?" H 5115 1246 50  0000 L CNN
-F 1 "330n" H 5115 1155 50  0000 L CNN
-F 2 "" H 5038 1050 50  0001 C CNN
-F 3 "~" H 5000 1200 50  0001 C CNN
-	1    5000 1200
+P 5400 1200
+F 0 "C?" H 5515 1246 50  0000 L CNN
+F 1 "330n" H 5515 1155 50  0000 L CNN
+F 2 "" H 5438 1050 50  0001 C CNN
+F 3 "~" H 5400 1200 50  0001 C CNN
+	1    5400 1200
 	1    0    0    -1  
 $EndComp
 $Comp
 L Device:C C?
 U 1 1 60458376
-P 6000 1200
-F 0 "C?" H 6115 1246 50  0000 L CNN
-F 1 "100n" H 6115 1155 50  0000 L CNN
-F 2 "" H 6038 1050 50  0001 C CNN
-F 3 "~" H 6000 1200 50  0001 C CNN
-	1    6000 1200
+P 6400 1200
+F 0 "C?" H 6515 1246 50  0000 L CNN
+F 1 "100n" H 6515 1155 50  0000 L CNN
+F 2 "" H 6438 1050 50  0001 C CNN
+F 3 "~" H 6400 1200 50  0001 C CNN
+	1    6400 1200
 	1    0    0    -1  
 $EndComp
 $Comp
 L Regulator_Linear:L78L33_TO92 U?
 U 1 1 60458CAC
-P 5500 1050
-F 0 "U?" H 5500 1292 50  0000 C CNN
-F 1 "L78L33_TO92" H 5500 1201 50  0000 C CNN
-F 2 "Package_TO_SOT_THT:TO-92_Inline" H 5500 1275 50  0001 C CIN
-F 3 "http://www.st.com/content/ccc/resource/technical/document/datasheet/15/55/e5/aa/23/5b/43/fd/CD00000446.pdf/files/CD00000446.pdf/jcr:content/translations/en.CD00000446.pdf" H 5500 1000 50  0001 C CNN
-	1    5500 1050
+P 5900 1050
+F 0 "U?" H 5900 1292 50  0000 C CNN
+F 1 "L78L33_TO92" H 5900 1201 50  0000 C CNN
+F 2 "Package_TO_SOT_THT:TO-92_Inline" H 5900 1275 50  0001 C CIN
+F 3 "http://www.st.com/content/ccc/resource/technical/document/datasheet/15/55/e5/aa/23/5b/43/fd/CD00000446.pdf/files/CD00000446.pdf/jcr:content/translations/en.CD00000446.pdf" H 5900 1000 50  0001 C CNN
+	1    5900 1050
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	5000 1050 5200 1050
+	5400 1050 5600 1050
 Wire Wire Line
-	5800 1050 6000 1050
+	6200 1050 6400 1050
 Wire Wire Line
-	6000 1350 5500 1350
-Connection ~ 5500 1350
+	6400 1350 5900 1350
+Connection ~ 5900 1350
 Wire Wire Line
-	5500 1350 5000 1350
+	5900 1350 5400 1350
 Wire Wire Line
-	4500 1000 5000 1000
+	5400 1000 5400 1050
+Connection ~ 5400 1050
 Wire Wire Line
-	5000 1000 5000 1050
-Connection ~ 5000 1050
+	5400 1350 5400 1400
+Connection ~ 5400 1350
 Wire Wire Line
-	5000 1350 5000 1400
+	4500 1400 5400 1400
+$Comp
+L Switch:SW_DPDT_x2 SW?
+U 1 1 6047A91C
+P 4950 900
+F 0 "SW?" H 4950 1185 50  0000 C CNN
+F 1 "SW_DPDT_x2" H 4950 1094 50  0000 C CNN
+F 2 "" H 4950 900 50  0001 C CNN
+F 3 "~" H 4950 900 50  0001 C CNN
+	1    4950 900 
+	1    0    0    -1  
+$EndComp
 Wire Wire Line
-	5000 1400 4500 1400
-Connection ~ 5000 1350
+	4750 900  4500 900 
 Wire Wire Line
-	2650 750  2350 750 
-Connection ~ 2350 750 
+	4500 900  4500 1000
 Wire Wire Line
-	2350 750  2150 750 
+	5150 1000 5400 1000
 $EndSCHEMATC
