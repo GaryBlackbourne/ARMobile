@@ -48,6 +48,14 @@ UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN PV */
 
+typedef enum DirectionTypeDef{
+	FORWARD,
+	BACKWARD
+}DirectionTypeDef;
+
+uint8_t data = 0;
+uint8_t ctrl_msg = 0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -58,6 +66,15 @@ static void MX_TIM3_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_USART3_UART_Init(void);
 /* USER CODE BEGIN PFP */
+
+static void Stop(void);
+
+inline static void Set_Speed_Right(uint8_t);		// 0 <= param < 100
+inline static void Set_Speed_Left(uint8_t);			// 0 <= param < 100
+
+
+static void Set_Dir_Right(DirectionTypeDef);
+static void Set_Dir_Left(DirectionTypeDef);
 
 /* USER CODE END PFP */
 
@@ -99,6 +116,20 @@ int main(void)
   MX_USART2_UART_Init();
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
+
+  HAL_UART_Transmit(&huart2, "Initialized\n\r", sizeof("Initialized\n\r"), 100);
+
+  // comm:
+  HAL_UART_Receive_IT(&huart3, &ctrl_msg, 1);
+  HAL_UART_Receive_IT(&huart2, &data, 1);
+
+  // PWM
+  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_3);
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+
+  // Init movement
+  Stop();
+
 
   /* USER CODE END 2 */
 
@@ -181,7 +212,7 @@ static void MX_TIM2_Init(void)
   htim2.Instance = TIM2;
   htim2.Init.Prescaler = 4000;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 100;
+  htim2.Init.Period = 99;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
@@ -240,7 +271,7 @@ static void MX_TIM3_Init(void)
   htim3.Instance = TIM3;
   htim3.Init.Prescaler = 4000;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 100;
+  htim3.Init.Period = 99;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
@@ -328,7 +359,7 @@ static void MX_USART3_UART_Init(void)
 
   /* USER CODE END USART3_Init 1 */
   huart3.Instance = USART3;
-  huart3.Init.BaudRate = 38400;
+  huart3.Init.BaudRate = 9600;
   huart3.Init.WordLength = UART_WORDLENGTH_8B;
   huart3.Init.StopBits = UART_STOPBITS_1;
   huart3.Init.Parity = UART_PARITY_NONE;
@@ -393,9 +424,111 @@ static void MX_GPIO_Init(void)
 
 }
 
-
 /* USER CODE BEGIN 4 */
 
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef * huart){
+	if(huart->Instance == huart3.Instance){
+		// bluetooth message
+
+
+
+		HAL_UART_Receive_IT(&huart3, &ctrl_msg, 1);
+	}else
+	if(huart->Instance == huart2.Instance){
+		// serial terminal message
+		HAL_UART_Transmit(&huart2, &data, 1, 10);
+		switch(data){
+
+		case 'e':
+			Set_Dir_Right(FORWARD);
+			break;
+		case 'd':
+			Set_Dir_Right(BACKWARD);
+			break;
+		case 'q':
+			Set_Dir_Left(FORWARD);
+			break;
+		case 'a':
+			Set_Dir_Left(BACKWARD);
+			break;
+		case 'r':
+			Set_Speed_Left(70);
+			break;
+		case 'f':
+			Set_Speed_Left(30);
+			break;
+		case 't':
+			Set_Speed_Right(70);
+			break;
+		case 'g':
+			Set_Speed_Right(30);
+			break;
+		case 's':
+			Stop();
+			break;
+		default:
+			break;
+		}
+
+
+		HAL_UART_Receive_IT(&huart2, &data, 1);
+	}
+	return;
+}
+
+void Stop(void){
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, 0);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, 0);
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, 0);
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0, 0);
+
+	Set_Speed_Left(0);
+	Set_Speed_Right(0);
+
+	return;
+}
+
+void Set_Speed_Right(uint8_t param){
+	TIM3->CCR1 = param;
+	return;
+}
+
+void Set_Speed_Left(uint8_t param){
+	TIM2->CCR3 = param;
+	return;
+}
+
+static void Set_Dir_Right(DirectionTypeDef dir){
+	switch (dir){
+	case FORWARD:
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, 1);
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0, 0);
+		break;
+	case BACKWARD:
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, 0);
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0, 1);
+		break;
+	default:
+		break;
+	}
+	return;
+}
+
+static void Set_Dir_Left(DirectionTypeDef dir){
+	switch (dir){
+		case FORWARD:
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, 1);
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, 0);
+			break;
+		case BACKWARD:
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, 0);
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, 1);
+			break;
+		default:
+			break;
+		}
+	return;
+}
 
 /* USER CODE END 4 */
 
