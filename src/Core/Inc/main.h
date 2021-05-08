@@ -60,6 +60,26 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define dir_right_2_Pin GPIO_PIN_0
+#define dir_right_2_GPIO_Port GPIOC
+#define dir_right_1_Pin GPIO_PIN_1
+#define dir_right_1_GPIO_Port GPIOC
+#define serial_debug_tx_Pin GPIO_PIN_2
+#define serial_debug_tx_GPIO_Port GPIOA
+#define serial_debug_rx_Pin GPIO_PIN_3
+#define serial_debug_rx_GPIO_Port GPIOA
+#define dir_left_1_Pin GPIO_PIN_4
+#define dir_left_1_GPIO_Port GPIOA
+#define dir_left_2_Pin GPIO_PIN_0
+#define dir_left_2_GPIO_Port GPIOB
+#define PWM_left_Pin GPIO_PIN_10
+#define PWM_left_GPIO_Port GPIOB
+#define serial_bluetooth_tx_Pin GPIO_PIN_10
+#define serial_bluetooth_tx_GPIO_Port GPIOC
+#define serial_bluetooth_rx_Pin GPIO_PIN_11
+#define serial_bluetooth_rx_GPIO_Port GPIOC
+#define PWM_right_Pin GPIO_PIN_4
+#define PWM_right_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
