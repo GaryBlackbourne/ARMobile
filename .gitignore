@@ -28,3 +28,11 @@ fp-info-cache
 
 *.xml
 *.csv
+
+# KDE prefs
+
+**/.directory
+
+# Debug folder
+
+*/src/Debug

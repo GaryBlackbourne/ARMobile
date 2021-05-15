@@ -32,6 +32,15 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+// forward and backward moving speed
+#define FWD_SPEED 70
+#define BWD_SPEED 70
+// speed for the outer wheels when turning
+#define TURN_SPEED 50
+// backwards speed for the inner wheels when turning
+#define ANTITURN_SPEED 10
+// time to wait before processing next keypress
+#define DELAY_TIME 10
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -56,6 +65,10 @@ typedef enum DirectionTypeDef{
 uint8_t data = 0;
 uint8_t ctrl_msg = 0;
 
+uint8_t left_presses = 0, right_presses = 0, fwd_presses = 0, bwd_presses = 0;
+
+const uint8_t err_bluetooth[] = "Illegal Bluetooth character\r\n";
+const uint8_t msg_init[] = "Initialized, version " __DATE__ " " __TIME__ "\r\n";
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -117,7 +130,7 @@ int main(void)
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
 
-  HAL_UART_Transmit(&huart2, "Initialized\n\r", sizeof("Initialized\n\r"), 100);
+  HAL_UART_Transmit(&huart2, msg_init, sizeof(msg_init), 100);
 
   // comm:
   HAL_UART_Receive_IT(&huart3, &ctrl_msg, 1);
@@ -137,6 +150,38 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  while(left_presses>0){
+		  Set_Dir_Left(FORWARD);
+		  Set_Dir_Right(BACKWARD);
+		  Set_Speed_Left(TURN_SPEED);
+		  Set_Speed_Right(ANTITURN_SPEED);
+		  left_presses--;
+		  HAL_Delay(DELAY_TIME);
+	  }
+	  while(right_presses>0){
+		  Set_Dir_Left(BACKWARD);
+		  Set_Dir_Right(FORWARD);
+		  Set_Speed_Left(ANTITURN_SPEED);
+		  Set_Speed_Right(TURN_SPEED);
+		  right_presses--;
+		  HAL_Delay(DELAY_TIME);
+	  }
+	  while(fwd_presses>0){
+		  Set_Dir_Left(FORWARD);
+		  Set_Dir_Right(FORWARD);
+		  Set_Speed_Left(FWD_SPEED);
+		  Set_Speed_Right(FWD_SPEED);
+		  fwd_presses--;
+		  HAL_Delay(DELAY_TIME);
+	  }
+	  while(bwd_presses>0){
+		  Set_Dir_Left(BACKWARD);
+		  Set_Dir_Right(BACKWARD);
+		  Set_Speed_Left(BWD_SPEED);
+		  Set_Speed_Right(BWD_SPEED);
+		  bwd_presses--;
+		  HAL_Delay(DELAY_TIME);
+	  }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -429,12 +474,28 @@ static void MX_GPIO_Init(void)
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef * huart){
 	if(huart->Instance == huart3.Instance){
 		// bluetooth message
+		HAL_UART_Transmit(&huart2, &ctrl_msg, 1, 10);
+		switch(ctrl_msg){
 
-
+		case 'l':
+			left_presses++;
+			break;
+		case 'r':
+			right_presses++;
+			break;
+		case 'f':
+			fwd_presses++;
+			break;
+		case 'b':
+			bwd_presses++;
+			break;
+		default:
+			HAL_UART_Transmit(&huart2, err_bluetooth, sizeof(err_bluetooth), 100);
+		}
 
 		HAL_UART_Receive_IT(&huart3, &ctrl_msg, 1);
-	}else
-	if(huart->Instance == huart2.Instance){
+
+	}else if(huart->Instance == huart2.Instance){
 		// serial terminal message
 		HAL_UART_Transmit(&huart2, &data, 1, 10);
 		switch(data){
