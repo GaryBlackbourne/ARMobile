@@ -62,8 +62,8 @@ typedef enum DirectionTypeDef{
 	BACKWARD
 }DirectionTypeDef;
 
-uint8_t data = 0;
-uint8_t ctrl_msg = 0;
+volatile uint8_t data = 0;
+volatile uint8_t ctrl_msg = 0;
 
 uint8_t left_presses = 0, right_presses = 0, fwd_presses = 0, bwd_presses = 0;
 
@@ -150,38 +150,39 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  while(left_presses>0){
-		  Set_Dir_Left(FORWARD);
-		  Set_Dir_Right(BACKWARD);
-		  Set_Speed_Left(TURN_SPEED);
-		  Set_Speed_Right(ANTITURN_SPEED);
-		  left_presses--;
-		  HAL_Delay(DELAY_TIME);
-	  }
-	  while(right_presses>0){
-		  Set_Dir_Left(BACKWARD);
-		  Set_Dir_Right(FORWARD);
-		  Set_Speed_Left(ANTITURN_SPEED);
-		  Set_Speed_Right(TURN_SPEED);
-		  right_presses--;
-		  HAL_Delay(DELAY_TIME);
-	  }
-	  while(fwd_presses>0){
-		  Set_Dir_Left(FORWARD);
-		  Set_Dir_Right(FORWARD);
-		  Set_Speed_Left(FWD_SPEED);
-		  Set_Speed_Right(FWD_SPEED);
-		  fwd_presses--;
-		  HAL_Delay(DELAY_TIME);
-	  }
-	  while(bwd_presses>0){
-		  Set_Dir_Left(BACKWARD);
-		  Set_Dir_Right(BACKWARD);
-		  Set_Speed_Left(BWD_SPEED);
-		  Set_Speed_Right(BWD_SPEED);
-		  bwd_presses--;
-		  HAL_Delay(DELAY_TIME);
-	  }
+//	  while(left_presses>0){
+//		  Set_Dir_Left(FORWARD);
+//		  Set_Dir_Right(BACKWARD);
+//		  Set_Speed_Left(TURN_SPEED);
+//		  Set_Speed_Right(ANTITURN_SPEED);
+//		  left_presses--;
+//		  HAL_Delay(DELAY_TIME);
+//	  }
+//	  while(right_presses>0){
+//		  Set_Dir_Left(BACKWARD);
+//		  Set_Dir_Right(FORWARD);
+//		  Set_Speed_Left(ANTITURN_SPEED);
+//		  Set_Speed_Right(TURN_SPEED);
+//		  right_presses--;
+//		  HAL_Delay(DELAY_TIME);
+//	  }
+//	  while(fwd_presses>0){
+//		  Set_Dir_Left(FORWARD);
+//		  Set_Dir_Right(FORWARD);
+//		  Set_Speed_Left(FWD_SPEED);
+//		  Set_Speed_Right(FWD_SPEED);
+//		  fwd_presses--;
+//		  HAL_Delay(DELAY_TIME);
+//	  }
+//	  while(bwd_presses>0){
+//		  Set_Dir_Left(BACKWARD);
+//		  Set_Dir_Right(BACKWARD);
+//		  Set_Speed_Left(BWD_SPEED);
+//		  Set_Speed_Right(BWD_SPEED);
+//		  bwd_presses--;
+//		  HAL_Delay(DELAY_TIME);
+//	  }
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -474,30 +475,51 @@ static void MX_GPIO_Init(void)
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef * huart){
 	if(huart->Instance == huart3.Instance){
 		// bluetooth message
-		HAL_UART_Transmit(&huart2, &ctrl_msg, 1, 10);
+		HAL_UART_Transmit(&huart2, &ctrl_msg, 1, 100);
+
 		switch(ctrl_msg){
 
 		case 'l':
-			left_presses++;
+			// left_presses++;
+			Set_Dir_Right(BACKWARD);
+			Set_Dir_Left(FORWARD);
+			Set_Speed_Left(30);
+			Set_Speed_Right(30);
 			break;
 		case 'r':
-			right_presses++;
+			// right_presses++;
+			Set_Dir_Right(FORWARD);
+			Set_Dir_Left(BACKWARD);
+			Set_Speed_Left(30);
+			Set_Speed_Right(30);
 			break;
 		case 'f':
-			fwd_presses++;
+			// fwd_presses++;
+			Set_Dir_Right(FORWARD);
+			Set_Dir_Left(FORWARD);
+			Set_Speed_Left(30);
+			Set_Speed_Right(30);
 			break;
 		case 'b':
-			bwd_presses++;
+			// bwd_presses++;
+			Set_Dir_Right(BACKWARD);
+			Set_Dir_Left(BACKWARD);
+			Set_Speed_Left(30);
+			Set_Speed_Right(30);
+			break;
+		case 's':
+			Stop();
 			break;
 		default:
-			HAL_UART_Transmit(&huart2, err_bluetooth, sizeof(err_bluetooth), 100);
+			//HAL_UART_Transmit(&huart2, err_bluetooth, sizeof(err_bluetooth), 100);
+			break;
 		}
 
 		HAL_UART_Receive_IT(&huart3, &ctrl_msg, 1);
 
 	}else if(huart->Instance == huart2.Instance){
 		// serial terminal message
-		HAL_UART_Transmit(&huart2, &data, 1, 10);
+		HAL_UART_Transmit(&huart2, &data, 1, 100);
 		switch(data){
 
 		case 'e':
@@ -530,8 +552,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef * huart){
 		default:
 			break;
 		}
-
-
 		HAL_UART_Receive_IT(&huart2, &data, 1);
 	}
 	return;
