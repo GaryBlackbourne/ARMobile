@@ -62,6 +62,13 @@ typedef enum DirectionTypeDef{
 	BACKWARD
 }DirectionTypeDef;
 
+enum speed{
+	slow = 30,
+	normal = 60,
+	fast = 90
+}speedMode = slow;
+
+
 volatile uint8_t data = 0;
 volatile uint8_t ctrl_msg = 0;
 
@@ -85,6 +92,7 @@ static void Stop(void);
 inline static void Set_Speed_Right(uint8_t);		// 0 <= param < 100
 inline static void Set_Speed_Left(uint8_t);			// 0 <= param < 100
 
+inline static void Set_Speed(uint8_t);
 
 static void Set_Dir_Right(DirectionTypeDef);
 static void Set_Dir_Left(DirectionTypeDef);
@@ -150,6 +158,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+
 //	  while(left_presses>0){
 //		  Set_Dir_Left(FORWARD);
 //		  Set_Dir_Right(BACKWARD);
@@ -483,29 +492,51 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef * huart){
 			// left_presses++;
 			Set_Dir_Right(BACKWARD);
 			Set_Dir_Left(FORWARD);
-			Set_Speed_Left(30);
-			Set_Speed_Right(30);
+			Set_Speed(speedMode);
 			break;
 		case 'r':
 			// right_presses++;
 			Set_Dir_Right(FORWARD);
 			Set_Dir_Left(BACKWARD);
-			Set_Speed_Left(30);
-			Set_Speed_Right(30);
+			Set_Speed(speedMode);
 			break;
 		case 'f':
 			// fwd_presses++;
 			Set_Dir_Right(FORWARD);
 			Set_Dir_Left(FORWARD);
-			Set_Speed_Left(30);
-			Set_Speed_Right(30);
+			Set_Speed(speedMode);
 			break;
 		case 'b':
 			// bwd_presses++;
 			Set_Dir_Right(BACKWARD);
 			Set_Dir_Left(BACKWARD);
-			Set_Speed_Left(30);
-			Set_Speed_Right(30);
+			Set_Speed(speedMode);
+			break;
+		case '+':
+			switch(speedMode){
+			case slow:
+				speedMode = normal;
+				break;
+			case normal:
+				speedMode = fast;
+				break;
+			default:
+				break;
+			}
+			Set_Speed(speedMode);
+			break;
+		case '-':
+			switch(speedMode){
+			case fast:
+				speedMode = normal;
+				break;
+			case normal:
+				speedMode = slow;
+				break;
+			default:
+				break;
+			}
+			Set_Speed(speedMode);
 			break;
 		case 's':
 			Stop();
@@ -608,6 +639,12 @@ static void Set_Dir_Left(DirectionTypeDef dir){
 		default:
 			break;
 		}
+	return;
+}
+
+static void Set_Speed(uint8_t speed){
+	Set_Speed_Right(speed);
+	Set_Speed_Left(speed);
 	return;
 }
 
