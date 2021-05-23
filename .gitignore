@@ -36,3 +36,6 @@ fp-info-cache
 # Debug folder
 
 */src/Debug
+
+# output PDF
+doc/documentation.pdf
