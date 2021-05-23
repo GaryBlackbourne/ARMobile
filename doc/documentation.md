@@ -41,16 +41,16 @@ For wireless communication with the board, a `HC-05` module was also connected t
 The mechanical base for this project was a small wooden board. Four small DC motors (RM-17) are mounted onto this board, and the PCB is secured to it with four screws. The main power source is located on the bottom of the cart. To have enough driving voltage, two 18650 Li-Ion cells, connected in series, were installed on board. They provide 7.2 V for the motors, and are used as the primary source of power for the controller as well. A simple power switch is installed onto the back of the vehicle, which can remove power entirely from the system.
 
 
-#### batteries:
+#### Batteries:
 ![](pics/batt.jpg)
 
-#### power switch:
+#### Power switch:
 ![](pics/switch.jpg)
 
-#### motors:
+#### Motors:
 ![](pics/motor.jpg)
 
-#### the finished hardware:
+#### The finished hardware:
 ![](pics/car.jpg)
 
 ## Software
@@ -96,7 +96,7 @@ The `speedMode`, is a global variable containing information about the speed of 
 static void Stop(void);
 
 inline static void Set_Speed_Right(uint8_t);		// 0 <= param < 100
-inline static void Set_Speed_Left(uint8_t);			// 0 <= param < 100
+inline static void Set_Speed_Left(uint8_t); 		// 0 <= param < 100
 
 inline static void Set_Speed(uint8_t);
 
